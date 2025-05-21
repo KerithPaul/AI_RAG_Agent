@@ -6,26 +6,35 @@ from src.AI_Recruitment_RAG.data_pipeline.process_data import logger
 
 config, _, schema = load_configs()
 
+db_config = {
+    'host': config['database']['host'],
+    'user': config['database']['user'],
+    'password': config['database']['password'],
+    'db': config['database']['database'],
+    'charset': config['database']['charset'],
+    'port': config['database']['port']
+}
+
 async def store_data_to_mysql(cleaned_data):
-    """Stores processed Federal Register data into MySQL."""
+    """Stores processed Federal Register data into MySQL"""
     conn = None
-    cur = None
-    db_config = config['database']
-    
     try:
-        conn = await aiomysql.connect(
-            host=db_config['host'],
-            user=db_config['user'],
-            password=db_config['password'],
-            db=db_config['db_name'],
-            charset=db_config['charset'],
-            port=db_config['port']
-        )
+        conn = await aiomysql.connect(**db_config)
         
         async with conn.cursor() as cur:
-            # Insert records one by one to handle errors better
-            successful_inserts = 0
+            # Create pipeline_status table if not exists
+            await cur.execute("""
+                CREATE TABLE IF NOT EXISTS pipeline_status (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    last_run TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    documents_processed INT,
+                    status VARCHAR(50),
+                    error_message TEXT
+                )
+            """)
             
+            # Insert records
+            successful_inserts = 0
             for _, row in cleaned_data.iterrows():
                 try:
                     await cur.execute("""
@@ -45,20 +54,15 @@ async def store_data_to_mysql(cleaned_data):
                         row["url"]
                     ))
                     successful_inserts += 1
-                except Exception as row_error:
-                    logger.error(f"Error inserting row: {str(row_error)}")
-                    continue
+                except Exception as e:
+                    logger.error(f"Error inserting row: {str(e)}")
             
-            # Update pipeline metadata in a separate transaction
+            # Update pipeline status
             await cur.execute("""
-                INSERT INTO pipeline_metadata 
-                (last_run, records_processed, status)
-                VALUES (%s, %s, %s)
-            """, (
-                datetime.now(),
-                successful_inserts,
-                'success' if successful_inserts > 0 else 'partial_success'
-            ))
+                INSERT INTO pipeline_status 
+                (documents_processed, status) 
+                VALUES (%s, %s)
+            """, (successful_inserts, "success"))
             
             await conn.commit()
             return successful_inserts

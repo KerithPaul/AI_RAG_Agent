@@ -1,12 +1,14 @@
 import asyncio
+import aiomysql
 import logging
 from pathlib import Path
 from datetime import datetime, timedelta
 from src.AI_Recruitment_RAG.data_pipeline.fetch_data import fetch_data
 from src.AI_Recruitment_RAG.data_pipeline.process_data import clean_data
-from src.AI_Recruitment_RAG.data_pipeline.store_data import store_data_to_mysql
+from src.AI_Recruitment_RAG.data_pipeline.store_data import store_data_to_mysql, db_config
 from src.AI_Recruitment_RAG.config.config_loader import load_configs
 from src.AI_Recruitment_RAG.agent.llm_interface import query_llm
+from src.AI_Recruitment_RAG.data_pipeline.fetch_data import fetch_data, verify_data_coverage
 
 # Load configurations
 config, _, _ = load_configs()
@@ -73,27 +75,50 @@ async def fetch_and_store_data():
         logger.error(f"Pipeline error: {str(e)}", exc_info=True)
         return False
 
-async def test_llm():
-    """Test LLM functionality"""
+
+async def verify_data_range():
+    """Verify the data range in the database"""
     try:
-        test_query = "Find executive documents from the last 7 days related to healthcare"
-        logger.info(f"Testing LLM with query: {test_query}")
-        
-        response = await query_llm(test_query)
-        logger.info("LLM test successful")
-        logger.info(f"Response: {response}")
-        
+        conn = await aiomysql.connect(**db_config)
+        async with conn.cursor() as cur:
+            await cur.execute("""
+                SELECT 
+                    MIN(publication_date) as oldest_record,
+                    MAX(publication_date) as newest_record,
+                    COUNT(*) as total_records
+                FROM executive_documents
+            """)
+            result = await cur.fetchone()
+            if result:
+                logger.info(f"Data range: {result[0]} to {result[1]}")
+                logger.info(f"Total records: {result[2]}")
     except Exception as e:
-        logger.error(f"LLM test failed: {str(e)}", exc_info=True)
+        logger.error(f"Data verification error: {str(e)}")
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 
 
 if __name__ == "__main__":
     import uvicorn
     from src.AI_Recruitment_RAG.api import app
+
+    # Check data coverage
+    coverage_info = asyncio.run(verify_data_coverage())
+    
+    if coverage_info:
+        if coverage_info['coverage_percent'] < 100:
+            logger.warning("Incomplete data coverage detected")
+            logger.warning(f"Current coverage: {coverage_info['coverage_percent']:.2f}%")
+            logger.warning(f"Missing {coverage_info['missing_docs']} documents")
+            logger.warning(f"Date range: {coverage_info['start_date']} to {coverage_info['end_date']}")
     
     # Run initial data pipeline
     asyncio.run(fetch_and_store_data())
+    
+    # Verify data range
+    asyncio.run(verify_data_range())
     
     # Start the FastAPI server
     uvicorn.run(

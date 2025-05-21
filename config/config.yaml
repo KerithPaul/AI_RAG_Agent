@@ -2,7 +2,7 @@ database:
   host: "localhost"
   user: "root"
   password: "kerith"
-  db_name: "federal_register"
+  database: "federal_register"
   charset: "utf8mb4"
   port: 3306
 
@@ -22,15 +22,23 @@ llm:
   temperature: 0.7
   max_tokens: 512
 
-pipeline:
-    schedule:
+data_pipeline:
+    #schedule:
+     #   enabled: true
+      #  run_time: "00:00"  # Midnight
+       # timezone: "UTC"
+    fetch:
+        start_date: "2025-01-01"
+        batch_size: 1000
+        max_retries: 3
+        retry_delay: 2
+        api_url: "https://www.federalregister.gov/api/v1/documents.json"
+    pagination:
         enabled: true
-        run_time: "00:00"  # Midnight
-        timezone: "UTC"
-    retention:
-        days: 7
-        archive: true
-    batch_size: 100
+        per_page: 100
+    #retention:
+     #   enabled: true
+      #  archive_enabled: false
 
 logging:
   level: "INFO"

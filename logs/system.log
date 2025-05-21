@@ -107,3 +107,70 @@ Once you have set up the search, you can retrieve executive documents related to
 2025-05-22 02:37:28,049 - RAG_Agent - INFO - LLM query successful
 2025-05-22 02:37:28,049 - RAG_Agent - INFO - Response sent successfully
 2025-05-22 02:37:55,572 - RAG_Agent - INFO - WebSocket connection closed by client
+2025-05-22 02:56:23,888 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 02:56:23,888 - RAG_Agent - ERROR - Error fetching data: 'data_pipeline'
+2025-05-22 02:56:23,888 - RAG_Agent - ERROR - Failed to fetch data from API
+2025-05-22 02:56:23,910 - RAG_Agent - INFO - Data range: 2025-05-21 to 2025-05-21
+2025-05-22 02:56:23,910 - RAG_Agent - INFO - Total records: 67
+2025-05-22 02:56:28,813 - RAG_Agent - INFO - WebSocket connection established
+2025-05-22 02:56:57,795 - RAG_Agent - INFO - Received query: do you have the federal documents on 2025-01-01
+2025-05-22 02:57:02,239 - RAG_Agent - INFO - LLM query successful
+2025-05-22 02:57:02,240 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 03:05:35,441 - RAG_Agent - INFO - WebSocket connection closed by client
+2025-05-22 03:05:49,886 - RAG_Agent - ERROR - Error verifying data coverage: name 'aiomysql' is not defined
+2025-05-22 03:05:49,887 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 03:05:49,887 - RAG_Agent - ERROR - Error fetching data: 'data_pipeline'
+2025-05-22 03:05:49,887 - RAG_Agent - ERROR - Failed to fetch data from API
+2025-05-22 03:05:49,917 - RAG_Agent - INFO - Data range: 2025-05-21 to 2025-05-21
+2025-05-22 03:05:49,917 - RAG_Agent - INFO - Total records: 67
+2025-05-22 03:12:12,999 - RAG_Agent - ERROR - Error verifying data coverage: 'data_pipeline'
+2025-05-22 03:12:13,000 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 03:12:13,000 - RAG_Agent - ERROR - Error fetching data: 'data_pipeline'
+2025-05-22 03:12:13,000 - RAG_Agent - ERROR - Failed to fetch data from API
+2025-05-22 03:12:13,008 - RAG_Agent - INFO - Data range: 2025-05-21 to 2025-05-21
+2025-05-22 03:12:13,008 - RAG_Agent - INFO - Total records: 67
+2025-05-22 03:16:49,857 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 03:16:49,859 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 03:16:49,860 - RAG_Agent - WARNING - Current coverage: 0.00%
+2025-05-22 03:19:17,076 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 03:19:17,078 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 03:19:17,078 - RAG_Agent - WARNING - Current coverage: 0.72%
+2025-05-22 03:19:17,078 - RAG_Agent - WARNING - Missing 9177 documents
+2025-05-22 03:19:17,078 - RAG_Agent - WARNING - Date range: 2025-01-01 to 2025-05-22
+2025-05-22 03:19:17,079 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 03:19:18,323 - RAG_Agent - INFO - Successfully fetched 100 documents
+2025-05-22 03:19:18,323 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 03:19:18,358 - RAG_Agent - INFO - Processed 69 records successfully
+2025-05-22 03:19:18,359 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 03:19:18,359 - RAG_Agent - ERROR - Database error: 'db_name'
+2025-05-22 03:19:18,359 - RAG_Agent - ERROR - Pipeline error: 'db_name'
+Traceback (most recent call last):
+  File "K:\Environments\RAG_Agent\main.py", line 70, in fetch_and_store_data
+    await store_data_to_mysql(cleaned_data)
+  File "K:\Environments\RAG_Agent\src\AI_Recruitment_RAG\data_pipeline\store_data.py", line 26, in store_data_to_mysql
+    db=db_config['db_name'],
+       ~~~~~~~~~^^^^^^^^^^^
+KeyError: 'db_name'
+2025-05-22 03:19:18,366 - RAG_Agent - INFO - Data range: 2025-05-21 to 2025-05-21
+2025-05-22 03:19:18,367 - RAG_Agent - INFO - Total records: 67
+2025-05-22 03:21:51,795 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 03:21:51,797 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 03:21:51,797 - RAG_Agent - WARNING - Current coverage: 0.72%
+2025-05-22 03:21:51,797 - RAG_Agent - WARNING - Missing 9177 documents
+2025-05-22 03:21:51,797 - RAG_Agent - WARNING - Date range: 2025-01-01 to 2025-05-22
+2025-05-22 03:21:51,798 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 03:21:52,835 - RAG_Agent - INFO - Successfully fetched 100 documents
+2025-05-22 03:21:52,835 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 03:21:52,841 - RAG_Agent - INFO - Processed 69 records successfully
+2025-05-22 03:21:52,841 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 03:21:52,995 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 03:21:52,998 - RAG_Agent - INFO - Data range: 2025-01-02 to 2025-05-21
+2025-05-22 03:21:52,998 - RAG_Agent - INFO - Total records: 136
+2025-05-22 03:22:04,305 - RAG_Agent - INFO - WebSocket connection established
+2025-05-22 03:23:46,203 - RAG_Agent - INFO - Received query: what are the executive documents related to artificial intelligence and security in all the past years
+2025-05-22 03:23:51,554 - RAG_Agent - INFO - LLM query successful
+2025-05-22 03:23:51,555 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 03:24:19,984 - RAG_Agent - INFO - Received query: what are the new executive orders by president donald trump this month and summarize them for me.
+2025-05-22 03:24:22,814 - RAG_Agent - INFO - LLM query successful
+2025-05-22 03:24:22,815 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 03:24:39,914 - RAG_Agent - INFO - WebSocket connection closed by client

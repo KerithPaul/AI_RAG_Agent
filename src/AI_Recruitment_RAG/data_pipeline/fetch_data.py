@@ -1,39 +1,93 @@
 import aiohttp
+import aiomysql
 import asyncio
 from datetime import datetime, timedelta
 from src.AI_Recruitment_RAG.data_pipeline.process_data import logger
 from ..config.config_loader import load_configs
+from src.AI_Recruitment_RAG.data_pipeline.store_data import db_config
 
 config, params, _ = load_configs()
 
-async def fetch_data():
-    """Fetches latest Federal Register documents based on configuration."""
-    base_url = config['api']['federal_register']['base_url']
-    batch_size = params['data_pipeline']['fetch']['batch_size']
-    date_range = params['data_pipeline']['fetch']['date_range_days']
-    max_retries = config['api']['federal_register']['max_retries']
-    
-    # Calculate date range
-    from_date = (datetime.now() - timedelta(days=date_range)).strftime('%Y-%m-%d')
-    
-    request_params = {
-        "conditions[publication_date][gte]": from_date,
-        "order": "newest",
-        "per_page": batch_size,
-    }
 
-    for attempt in range(max_retries):
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(base_url, params=request_params) as response:
-                    if response.status == 200:
-                        return await response.json()
-                    else:
-                        logger.error(f"API error: {response.status}")
-                        
-        except aiohttp.ClientError as e:
-            logger.error(f"Request error (attempt {attempt + 1}/{max_retries}): {str(e)}")
-            if attempt < max_retries - 1:
-                await asyncio.sleep(2 ** attempt)  # Exponential backoff
-            
-    return None
+async def fetch_page(session, url, params, retry=0):
+    """Fetch a single page of results with retry logic"""
+    try:
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                return await response.json()
+            elif retry < config['data_pipeline']['fetch']['max_retries']:
+                await asyncio.sleep(config['data_pipeline']['fetch']['retry_delay'])
+                return await fetch_page(session, url, params, retry + 1)
+            else:
+                logger.error(f"Failed to fetch page after {retry} retries")
+                return None
+    except Exception as e:
+        logger.error(f"Error fetching page: {str(e)}")
+        return None
+    
+
+async def fetch_data():
+    """Fetches Federal Register documents with pagination"""
+    try:
+        # Get configuration
+        fetch_config = config['data_pipeline']['fetch']
+        base_url = fetch_config['api_url']
+        per_page = config['data_pipeline']['pagination']['per_page']
+        
+        params = {
+            "conditions[publication_date][gte]": fetch_config['start_date'],
+            "conditions[publication_date][lte]": datetime.now().strftime('%Y-%m-%d'),
+            "per_page": per_page,
+            "order": "oldest"
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    logger.info(f"Successfully fetched {len(data.get('results', []))} documents")
+                    return data
+                else:
+                    logger.error(f"API request failed with status {response.status}")
+                    return None
+                    
+    except Exception as e:
+        logger.error(f"Error fetching data: {str(e)}")
+        return None
+    
+
+
+async def verify_data_coverage():
+    """Verifies data coverage from 2025-01-01"""
+    try:
+        fetch_config = config['data_pipeline']['fetch']
+        base_url = fetch_config['api_url']
+        
+        params = {
+            "conditions[publication_date][gte]": fetch_config['start_date'],
+            "conditions[publication_date][lte]": datetime.now().strftime('%Y-%m-%d'),
+            "per_page": 1
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    total_expected = data.get('count', 0)
+                    current_count = 67  # Replace with actual DB count
+                    
+                    coverage_info = {
+                        "expected_count": total_expected,
+                        "current_count": current_count,
+                        "coverage_percent": (current_count / total_expected * 100) if total_expected > 0 else 0,
+                        "missing_docs": total_expected - current_count,
+                        "start_date": fetch_config['start_date'],
+                        "end_date": datetime.now().strftime('%Y-%m-%d')
+                    }
+                    
+                    logger.info(f"Expected documents from API: {coverage_info['expected_count']}")
+                    return coverage_info
+                    
+    except Exception as e:
+        logger.error(f"Error verifying data coverage: {str(e)}")
+        return None
