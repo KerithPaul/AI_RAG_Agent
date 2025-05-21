@@ -1,0 +1,26 @@
+database:
+  host: "localhost"
+  user: "root"
+  password: "kerith"
+  db_name: "federal_register"
+  charset: "utf8mb4"
+  port: 3306
+
+api:
+  federal_register:
+    base_url: "https://www.federalregister.gov/api/v1/documents.json"
+    version: "v1"
+  fda:
+    base_url: "https://api.fda.gov/drug/event.json"
+    api_key: ""  # Add your FDA API key if needed
+
+llm:
+  provider: "ollama"
+  model: "qwen2.5-1b"
+  temperature: 0.7
+  max_tokens: 512
+
+logging:
+  level: "INFO"
+  file_path: "logs/system.log"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

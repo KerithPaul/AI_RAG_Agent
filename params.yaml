@@ -1,0 +1,26 @@
+data_pipeline:
+  fetch:
+    batch_size: 100
+    retry_attempts: 3
+    timeout_seconds: 30
+    date_range_days: 7
+  
+  storage:
+    cache_duration: "7d"
+    enable_archiving: true
+    archive_after_days: 30
+
+  processing:
+    chunk_size: 1000
+    max_concurrent_requests: 5
+    cleanup_older_than_days: 90
+
+api:
+  request:
+    timeout: 5
+    max_retries: 3
+    backoff_factor: 2
+  
+  rate_limits:
+    requests_per_minute: 60
+    max_concurrent: 10

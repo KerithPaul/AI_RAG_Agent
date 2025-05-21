@@ -1,0 +1,40 @@
+tables:
+  executive_documents:
+    name: "executive_documents"
+    columns:
+      id:
+        type: "INT"
+        attributes: ["PRIMARY KEY", "AUTO_INCREMENT"]
+      title:
+        type: "VARCHAR(255)"
+        attributes: ["NOT NULL"]
+      publication_date:
+        type: "DATE"
+        attributes: ["NOT NULL"]
+      abstract:
+        type: "TEXT"
+        attributes: ["NOT NULL"]
+      document_number:
+        type: "VARCHAR(100)"
+        attributes: ["UNIQUE"]
+      url:
+        type: "VARCHAR(255)"
+        attributes: ["NOT NULL"]
+    indices:
+      - name: "idx_pub_date"
+        columns: ["publication_date"]
+      - name: "idx_doc_number"
+        columns: ["document_number"]
+
+  metadata:
+    name: "pipeline_metadata"
+    columns:
+      id:
+        type: "INT"
+        attributes: ["PRIMARY KEY", "AUTO_INCREMENT"]
+      last_fetch:
+        type: "TIMESTAMP"
+      records_processed:
+        type: "INT"
+      status:
+        type: "VARCHAR(50)"
