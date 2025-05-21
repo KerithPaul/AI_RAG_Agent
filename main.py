@@ -6,9 +6,10 @@ from src.AI_Recruitment_RAG.data_pipeline.fetch_data import fetch_data
 from src.AI_Recruitment_RAG.data_pipeline.process_data import clean_data
 from src.AI_Recruitment_RAG.data_pipeline.store_data import store_data_to_mysql
 from src.AI_Recruitment_RAG.config.config_loader import load_configs
+from src.AI_Recruitment_RAG.agent.llm_interface import query_llm
 
 # Load configurations
-config, params, _ = load_configs()
+config, _, _ = load_configs()
 
 def setup_logging():
     """Configure logging with both file and console handlers"""
@@ -21,7 +22,7 @@ def setup_logging():
     
     # Create formatter
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        config['logging']['format']
     )
     
     # Setup file handler
@@ -34,7 +35,7 @@ def setup_logging():
     
     # Get logger
     logger = logging.getLogger('RAG_Agent')
-    logger.setLevel(logging.INFO)
+    logger.setLevel(config['logging']['level'])
     
     # Add handlers
     logger.addHandler(file_handler)
@@ -72,11 +73,20 @@ async def fetch_and_store_data():
         logger.error(f"Pipeline error: {str(e)}", exc_info=True)
         return False
 
+async def test_llm():
+    """Test LLM functionality"""
+    try:
+        test_query = "Find executive documents from the last 7 days related to healthcare"
+        logger.info(f"Testing LLM with query: {test_query}")
+        
+        response = await query_llm(test_query)
+        logger.info("LLM test successful")
+        logger.info(f"Response: {response}")
+        
+    except Exception as e:
+        logger.error(f"LLM test failed: {str(e)}", exc_info=True)
+
 if __name__ == "__main__":
-    # Run the data pipeline
-    success = asyncio.run(fetch_and_store_data())
-    
-    if success:
-        logger.info("Initial data load completed successfully")
-    else:
-        logger.error("Initial data load failed")
+    # Run data pipeline and LLM test
+    asyncio.run(fetch_and_store_data())
+    asyncio.run(test_llm())

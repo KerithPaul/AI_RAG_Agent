@@ -58,3 +58,16 @@ pymysql.err.ProgrammingError: Cursor closed
 2025-05-22 01:27:16,099 - RAG_Agent - INFO - Storing data in MySQL...
 2025-05-22 01:27:16,164 - RAG_Agent - INFO - Data pipeline completed successfully!
 2025-05-22 01:27:16,164 - RAG_Agent - INFO - Initial data load completed successfully
+2025-05-22 01:59:57,166 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 01:59:58,070 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 01:59:58,103 - RAG_Agent - INFO - Processed 67 records successfully
+2025-05-22 01:59:58,103 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 01:59:58,193 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 01:59:58,193 - RAG_Agent - INFO - Testing LLM with query: Find executive documents from the last 7 days related to healthcare
+2025-05-22 02:00:01,425 - RAG_Agent - INFO - LLM query successful
+2025-05-22 02:00:01,425 - RAG_Agent - INFO - LLM test successful
+2025-05-22 02:00:01,425 - RAG_Agent - INFO - Response: To find executive documents related to healthcare from the last 7 days, you can use the search_Executive Documents tool.
+
+The start_date and end_date of the search must be specified. You can specify the keywords as well if you have any specific requirements such as a strict deadline or specific language.
+
+Once you have set up the search, you can retrieve executive documents related to healthcare from the last 7 days.
