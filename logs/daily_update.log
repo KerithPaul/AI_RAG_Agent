@@ -1,0 +1,6 @@
+2025-05-22 04:26:51,580 - INFO - Starting daily update
+2025-05-22 04:26:52,433 - INFO - Expected documents from API: 9244
+2025-05-22 04:26:52,433 - INFO - Current coverage: 0.72%
+2025-05-22 04:26:53,616 - INFO - Successfully fetched 100 documents
+2025-05-22 04:26:53,644 - INFO - Processed 69 records successfully
+2025-05-22 04:26:53,720 - INFO - Successfully processed 69 documents
