@@ -86,7 +86,20 @@ async def test_llm():
     except Exception as e:
         logger.error(f"LLM test failed: {str(e)}", exc_info=True)
 
+
+
 if __name__ == "__main__":
-    # Run data pipeline and LLM test
+    import uvicorn
+    from src.AI_Recruitment_RAG.api import app
+    
+    # Run initial data pipeline
     asyncio.run(fetch_and_store_data())
-    asyncio.run(test_llm())
+    
+    # Start the FastAPI server
+    uvicorn.run(
+        app,
+        host=config['api']['server']['host'],
+        port=config['api']['server']['port'],
+        log_level="info",
+        ws="websockets"
+    )

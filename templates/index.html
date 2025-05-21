@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Federal Register RAG Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #chat-container {
+            height: 400px;
+            border: 1px solid #ddd;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        #input-container {
+            display: flex;
+            gap: 10px;
+        }
+        #query-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Federal Register Document Search</h1>
+    <div id="chat-container"></div>
+    <div id="input-container">
+        <input type="text" id="query-input" placeholder="Ask about Federal Register documents...">
+        <button onclick="sendQuery()">Send</button>
+    </div>
+
+    <script>
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+        const chatContainer = document.getElementById('chat-container');
+        const queryInput = document.getElementById('query-input');
+
+        ws.onopen = function() {
+            appendMessage('System', 'Connected to RAG Agent');
+        };
+
+        ws.onmessage = function(event) {
+            appendMessage('Agent', event.data);
+        };
+
+        function sendQuery() {
+            const query = queryInput.value.trim();
+            if (query && ws.readyState === WebSocket.OPEN) {
+                appendMessage('You', query);
+                ws.send(query);
+                queryInput.value = '';
+            }
+        }
+
+        function appendMessage(sender, message) {
+            const msgDiv = document.createElement('div');
+            msgDiv.style.margin = '10px 0';
+            msgDiv.style.padding = '8px';
+            msgDiv.style.borderRadius = '4px';
+            msgDiv.style.backgroundColor = sender === 'You' ? '#e3f2fd' : '#f5f5f5';
+            msgDiv.textContent = `${sender}: ${message}`;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        queryInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendQuery();
+            }
+        });
+    </script>
+</body>
+</html>
