@@ -18,7 +18,7 @@ api:
 
 llm:
   provider: "ollama"
-  model: "mistral"
+  model: "qwen:0.5b"
   temperature: 0.7
   max_tokens: 512
 
