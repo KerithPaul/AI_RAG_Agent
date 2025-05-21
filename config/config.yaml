@@ -7,18 +7,30 @@ database:
   port: 3306
 
 api:
-  federal_register:
-    base_url: "https://www.federalregister.gov/api/v1/documents.json"
-    version: "v1"
-  fda:
-    base_url: "https://api.fda.gov/drug/event.json"
-    api_key: ""  # Add your FDA API key if needed
+    federal_register:
+        base_url: "https://www.federalregister.gov/api/v1/documents.json"
+        version: "v1"
+        max_retries: 3
+    server:
+        host: "0.0.0.0"
+        port: 8000
+        cors_origins: ["*"]
 
 llm:
   provider: "ollama"
-  model: "qwen2.5-1b"
+  model: "mistral"
   temperature: 0.7
   max_tokens: 512
+
+pipeline:
+    schedule:
+        enabled: true
+        run_time: "00:00"  # Midnight
+        timezone: "UTC"
+    retention:
+        days: 7
+        archive: true
+    batch_size: 100
 
 logging:
   level: "INFO"

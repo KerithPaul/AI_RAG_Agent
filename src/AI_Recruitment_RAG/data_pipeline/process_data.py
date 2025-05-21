@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+from datetime import datetime
 from ..config.config_loader import load_configs
 
 _, params, schema = load_configs()
@@ -19,37 +20,33 @@ def clean_data(raw_data):
         'abstract': 'abstract',
         'document_number': 'document_number',
         'publication_date': 'publication_date',
-        'html_url': 'url'  # Federal Register API uses html_url for the URL field
+        'html_url': 'url'
     }
     
-    # Rename columns according to mapping
+    # Rename columns
     df = df.rename(columns=field_mapping)
     
-    # Get expected columns from schema
-    expected_columns = [col for col in schema['tables']['executive_documents']['columns'] 
-                       if col != 'id']
-    
-    # Check for missing columns
-    missing_columns = [col for col in expected_columns if col not in df.columns]
+    # Validate required columns
+    required_columns = ['title', 'publication_date', 'abstract', 'document_number', 'url']
+    missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
-        logger.warning(f"Missing columns in API response: {missing_columns}")
-        # Add missing columns with None values
-        for col in missing_columns:
-            df[col] = None
+        logger.error(f"Missing required columns: {missing_columns}")
+        return pd.DataFrame()
     
-    # Select only the columns we need
-    df = df[expected_columns]
+    # Data type conversions
+    df['publication_date'] = pd.to_datetime(df['publication_date']).dt.date
     
-    # Apply processing parameters
+    # Clean text fields
+    text_columns = ['title', 'abstract']
+    for col in text_columns:
+        df[col] = df[col].str.strip()
+    
+    # Remove invalid records
+    df = df.dropna(subset=required_columns)
+    
+    # Apply size limits from params
     chunk_size = params['data_pipeline']['processing']['chunk_size']
     df = df.head(chunk_size)
     
-    # Remove rows with any NULL values
-    df_cleaned = df.dropna()
-    
-    if df_cleaned.empty:
-        logger.error("No valid data after cleaning")
-        return pd.DataFrame()
-        
-    logger.info(f"Successfully cleaned {len(df_cleaned)} records")
-    return df_cleaned
+    logger.info(f"Processed {len(df)} records successfully")
+    return df

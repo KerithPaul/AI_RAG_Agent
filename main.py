@@ -1,11 +1,14 @@
 import asyncio
 import logging
-import os
 from pathlib import Path
+from datetime import datetime, timedelta
 from src.AI_Recruitment_RAG.data_pipeline.fetch_data import fetch_data
 from src.AI_Recruitment_RAG.data_pipeline.process_data import clean_data
 from src.AI_Recruitment_RAG.data_pipeline.store_data import store_data_to_mysql
 from src.AI_Recruitment_RAG.config.config_loader import load_configs
+
+# Load configurations
+config, params, _ = load_configs()
 
 def setup_logging():
     """Configure logging with both file and console handlers"""
@@ -42,28 +45,38 @@ def setup_logging():
 # Initialize logging
 logger = setup_logging()
 
-async def run_pipeline():
-    """Executes the full data pipeline: fetch, clean, and store."""
+async def fetch_and_store_data():
+    """Fetches data from Federal Register API and stores in MySQL"""
     try:
-        logger.info("Starting data pipeline...")
+        # Fetch data
+        logger.info("Fetching data from Federal Register API...")
         raw_data = await fetch_data()
         if raw_data is None:
-            logger.error("Failed to fetch data")
-            return
-        
-        logger.info("Cleaning data...")
+            logger.error("Failed to fetch data from API")
+            return False
+
+        # Process data
+        logger.info("Processing fetched data...")
         cleaned_data = clean_data(raw_data)
         if cleaned_data.empty:
-            logger.error("No valid data available after cleaning")
-            return
-        
-        logger.info("Storing data to MySQL...")
+            logger.error("No valid data after cleaning")
+            return False
+
+        # Store in database
+        logger.info("Storing data in MySQL...")
         await store_data_to_mysql(cleaned_data)
-        logger.info("Data pipeline executed successfully!")
-        
+        logger.info("Data pipeline completed successfully!")
+        return True
+
     except Exception as e:
         logger.error(f"Pipeline error: {str(e)}", exc_info=True)
-        raise
+        return False
 
 if __name__ == "__main__":
-    asyncio.run(run_pipeline())
+    # Run the data pipeline
+    success = asyncio.run(fetch_and_store_data())
+    
+    if success:
+        logger.info("Initial data load completed successfully")
+    else:
+        logger.error("Initial data load failed")

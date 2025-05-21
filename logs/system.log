@@ -6,3 +6,55 @@
 2025-05-21 23:33:42,868 - RAG_Agent - INFO - Successfully cleaned 31 records
 2025-05-21 23:33:42,868 - RAG_Agent - INFO - Storing data to MySQL...
 2025-05-21 23:33:42,932 - RAG_Agent - INFO - Data pipeline executed successfully!
+2025-05-22 00:03:43,374 - RAG_Agent - INFO - Starting data pipeline...
+2025-05-22 00:03:44,277 - RAG_Agent - INFO - Cleaning data...
+2025-05-22 00:03:44,293 - RAG_Agent - INFO - Successfully cleaned 67 records
+2025-05-22 00:03:44,293 - RAG_Agent - INFO - Storing data to MySQL...
+2025-05-22 00:03:44,327 - RAG_Agent - INFO - Data pipeline executed successfully!
+2025-05-22 01:22:27,125 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 01:22:28,370 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 01:22:28,395 - RAG_Agent - INFO - Processed 67 records successfully
+2025-05-22 01:22:28,395 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 01:22:28,452 - RAG_Agent - ERROR - Pipeline error: Cursor closed
+Traceback (most recent call last):
+  File "K:\Environments\RAG_Agent\src\AI_Recruitment_RAG\data_pipeline\store_data.py", line 26, in store_data_to_mysql
+    await cur.execute("""
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\cursors.py", line 239, in execute
+    await self._query(query)
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\cursors.py", line 457, in _query
+    await conn.query(q)
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\connection.py", line 469, in query
+    await self._read_query_result(unbuffered=unbuffered)
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\connection.py", line 683, in _read_query_result
+    await result.read()
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\connection.py", line 1164, in read
+    first_packet = await self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\connection.py", line 652, in _read_packet
+    packet.raise_for_error()
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1406, "Data too long for column 'title' at row 1")
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "K:\Environments\RAG_Agent\main.py", line 67, in fetch_and_store_data
+    await store_data_to_mysql(cleaned_data)
+  File "K:\Environments\RAG_Agent\src\AI_Recruitment_RAG\data_pipeline\store_data.py", line 60, in store_data_to_mysql
+    await cur.execute("""
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\cursors.py", line 231, in execute
+    conn = self._get_db()
+           ^^^^^^^^^^^^^^
+  File "K:\Environments\RAG_Agent\env\Lib\site-packages\aiomysql\cursors.py", line 165, in _get_db
+    raise ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed
+2025-05-22 01:22:28,501 - RAG_Agent - ERROR - Initial data load failed
+2025-05-22 01:27:15,366 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 01:27:16,091 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 01:27:16,099 - RAG_Agent - INFO - Processed 67 records successfully
+2025-05-22 01:27:16,099 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 01:27:16,164 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 01:27:16,164 - RAG_Agent - INFO - Initial data load completed successfully
