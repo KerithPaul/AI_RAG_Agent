@@ -1,53 +1,67 @@
 import json
 import aiomysql
-import asyncio
 import logging
 from ..config.config_loader import load_configs
 
 logger = logging.getLogger('RAG_Agent')
 config, _, _ = load_configs()
 
-async def fetch_executive_documents(date_range):
-    """Fetches executive documents from MySQL based on a date range."""
+async def search_documents(start_date, end_date, keywords=None):
+    """Search executive documents in the database."""
     try:
-        db_config = config['database']
         conn = await aiomysql.connect(
-            host=db_config['host'],
-            user=db_config['user'],
-            password=db_config['password'],
-            db=db_config['db_name'],
-            charset=db_config['charset'],
-            port=db_config['port']
+            host=config['database']['host'],
+            user=config['database']['user'],
+            password=config['database']['password'],
+            db=config['database']['db_name'],
+            charset=config['database']['charset'],
+            port=config['database']['port']
         )
         
         async with conn.cursor(aiomysql.DictCursor) as cur:
             query = """
                 SELECT title, publication_date, abstract, document_number, url 
                 FROM executive_documents 
-                WHERE publication_date >= %s
+                WHERE publication_date BETWEEN %s AND %s
             """
-            await cur.execute(query, (date_range,))
+            params = [start_date, end_date]
+            
+            if keywords:
+                query += " AND MATCH(title, abstract) AGAINST(%s IN NATURAL LANGUAGE MODE)"
+                params.append(keywords)
+            
+            await cur.execute(query, params)
             results = await cur.fetchall()
             
-            logger.info(f"Retrieved {len(results)} documents")
             return json.dumps({"documents": results}, default=str)
-
-    except Exception as e:
-        logger.error(f"Database error: {str(e)}")
-        raise
     finally:
         if 'conn' in locals():
             conn.close()
 
-def execute_tool_call(tool_call):
-    """Parses and executes tool calls from the LLM."""
+from datetime import datetime, timedelta
+
+def get_date_range(days=7):
+    """Calculate date range for queries"""
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days)
+    return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
+
+async def execute_tool_call(tool_call):
+    """Execute the appropriate tool based on the LLM's request."""
     if not tool_call:
         return "No tool call received"
 
     try:
-        if tool_call["name"] == "fetch_executive_documents":
-            date_range = tool_call["arguments"]["date_range"]
-            return asyncio.run(fetch_executive_documents(date_range))
+        if tool_call["name"] == "search_documents":
+            # Get default date range if not specified
+            start_date, end_date = get_date_range()
+            
+            args = tool_call["arguments"]
+            return await search_documents(
+                args.get("start_date", start_date),
+                args.get("end_date", end_date),
+                args.get("keywords", "healthcare")
+            )
         
         return "Invalid tool request"
 

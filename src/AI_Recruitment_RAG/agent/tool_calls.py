@@ -5,17 +5,25 @@ def get_tool_schema():
     """Defines available tools for the LLM."""
     tools = [
         {
-            "name": "fetch_executive_documents",
-            "description": "Fetches executive documents from MySQL based on a date range.",
+            "name": "search_documents",
+            "description": "Search executive documents in the database",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "date_range": {
+                    "start_date": {
                         "type": "string",
-                        "description": "Date range in format 'YYYY-MM-DD'"
+                        "description": "Start date in YYYY-MM-DD format"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "description": "End date in YYYY-MM-DD format"
+                    },
+                    "keywords": {
+                        "type": "string",
+                        "description": "Keywords to search in title and abstract"
                     }
                 },
-                "required": ["date_range"]
+                "required": ["start_date", "end_date"]
             }
         }
     ]
