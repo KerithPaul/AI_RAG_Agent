@@ -27,29 +27,57 @@ async def fetch_page(session, url, params, retry=0):
     
 
 async def fetch_data():
-    
+    """Fetches Federal Register documents for date range with pagination"""
     try:
         # Get configuration
         fetch_config = config['data_pipeline']['fetch']
         base_url = fetch_config['api_url']
         per_page = config['data_pipeline']['pagination']['per_page']
         
-        params = {
-            "conditions[publication_date][gte]": fetch_config['start_date'],
-            "conditions[publication_date][lte]": datetime.now().strftime('%Y-%m-%d'),
-            "per_page": per_page,
-            "order": "oldest"
-        }
+        # Set up date range
+        start_date = datetime.strptime(fetch_config['start_date'], '%Y-%m-%d')
+        end_date = datetime.now()
+        
+        all_results = []
+        current_page = 1
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(base_url, params=params) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    logger.info(f"Successfully fetched {len(data.get('results', []))} documents")
-                    return data
-                else:
-                    logger.error(f"API request failed with status {response.status}")
-                    return None
+            while True:
+                params = {
+                    "conditions[publication_date][gte]": start_date.strftime('%Y-%m-%d'),
+                    "conditions[publication_date][lte]": end_date.strftime('%Y-%m-%d'),
+                    "per_page": per_page,
+                    "page": current_page,
+                    "order": "oldest"
+                }
+                
+                async with session.get(base_url, params=params) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        results = data.get('results', [])
+                        
+                        if not results:
+                            break
+                            
+                        all_results.extend(results)
+                        total_count = data.get('count', 0)
+                        
+                        logger.info(f"Fetched page {current_page} with {len(results)} documents")
+                        logger.info(f"Total documents fetched so far: {len(all_results)}/{total_count}")
+                        
+                        if len(all_results) >= total_count:
+                            break
+                            
+                        current_page += 1
+                    else:
+                        logger.error(f"API request failed with status {response.status}")
+                        return None
+                        
+                # Add a small delay to avoid rate limiting
+                await asyncio.sleep(1)
+        
+        logger.info(f"Successfully fetched total of {len(all_results)} documents")
+        return {"results": all_results, "count": len(all_results)}
                     
     except Exception as e:
         logger.error(f"Error fetching data: {str(e)}")
