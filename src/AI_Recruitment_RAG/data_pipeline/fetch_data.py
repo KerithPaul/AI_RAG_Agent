@@ -10,7 +10,7 @@ config, params, _ = load_configs()
 
 
 async def fetch_page(session, url, params, retry=0):
-    """Fetch a single page of results with retry logic"""
+
     try:
         async with session.get(url, params=params) as response:
             if response.status == 200:
@@ -27,7 +27,7 @@ async def fetch_page(session, url, params, retry=0):
     
 
 async def fetch_data():
-    """Fetches Federal Register documents with pagination"""
+    
     try:
         # Get configuration
         fetch_config = config['data_pipeline']['fetch']
@@ -74,7 +74,18 @@ async def verify_data_coverage():
                 if response.status == 200:
                     data = await response.json()
                     total_expected = data.get('count', 0)
-                    current_count = 67  # Replace with actual DB count
+
+                    conn = await aiomysql.connect(**db_config)
+                    async with conn.cursor() as cur:
+                        await cur.execute("""
+                            SELECT COUNT(*) as doc_count
+                            FROM executive_documents
+                            WHERE publication_date >= %s
+                            AND publication_date <= %s
+                        """, (fetch_config['start_date'], datetime.now().strftime('%Y-%m-%d')))
+                        
+                        result = await cur.fetchone()
+                        current_count = result[0] if result else 0  
                     
                     coverage_info = {
                         "expected_count": total_expected,

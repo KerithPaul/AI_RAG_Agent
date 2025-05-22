@@ -174,3 +174,79 @@ KeyError: 'db_name'
 2025-05-22 03:24:22,814 - RAG_Agent - INFO - LLM query successful
 2025-05-22 03:24:22,815 - RAG_Agent - INFO - Response sent successfully
 2025-05-22 03:24:39,914 - RAG_Agent - INFO - WebSocket connection closed by client
+2025-05-22 05:33:10,485 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:33:10,485 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:33:10,491 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:33:10,498 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:33:10,505 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:33:10,505 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:33:11,372 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 05:33:11,372 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 05:33:11,372 - RAG_Agent - WARNING - Current coverage: 1.47%
+2025-05-22 05:33:11,372 - RAG_Agent - WARNING - Missing 9108 documents
+2025-05-22 05:33:11,387 - RAG_Agent - WARNING - Date range: 2025-01-01 to 2025-05-22
+2025-05-22 05:33:11,387 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 05:33:12,271 - RAG_Agent - INFO - Successfully fetched 100 documents
+2025-05-22 05:33:12,271 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 05:33:12,317 - RAG_Agent - INFO - Processed 69 records successfully
+2025-05-22 05:33:12,323 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 05:33:12,380 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 05:33:12,394 - RAG_Agent - INFO - Data range: 2025-01-02 to 2025-05-21
+2025-05-22 05:33:12,394 - RAG_Agent - INFO - Total records: 136
+2025-05-22 05:33:29,129 - RAG_Agent - INFO - WebSocket connection established
+2025-05-22 05:34:20,277 - RAG_Agent - INFO - Received query: how many document are related to donald trump
+2025-05-22 05:34:24,589 - RAG_Agent - ERROR - Cannot connect to Ollama. Please ensure Ollama is running
+2025-05-22 05:34:24,589 - RAG_Agent - ERROR - Error in LLM query: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2025-05-22 05:34:24,589 - RAG_Agent - ERROR - Error processing query: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2025-05-22 05:34:34,280 - RAG_Agent - INFO - WebSocket connection closed by client
+2025-05-22 05:37:50,721 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:37:50,721 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:37:50,721 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:37:50,733 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:37:50,737 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:37:50,741 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:37:51,491 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 05:37:51,491 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 05:37:51,491 - RAG_Agent - WARNING - Current coverage: 1.47%
+2025-05-22 05:37:51,491 - RAG_Agent - WARNING - Missing 9108 documents
+2025-05-22 05:37:51,491 - RAG_Agent - WARNING - Date range: 2025-01-01 to 2025-05-22
+2025-05-22 05:37:51,506 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 05:37:52,217 - RAG_Agent - INFO - Successfully fetched 100 documents
+2025-05-22 05:37:52,217 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 05:37:52,253 - RAG_Agent - INFO - Processed 69 records successfully
+2025-05-22 05:37:52,253 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 05:37:52,309 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 05:37:52,316 - RAG_Agent - INFO - Data range: 2025-01-02 to 2025-05-21
+2025-05-22 05:37:52,316 - RAG_Agent - INFO - Total records: 136
+2025-05-22 05:38:03,573 - RAG_Agent - INFO - WebSocket connection established
+2025-05-22 05:38:21,013 - RAG_Agent - INFO - Received query: how many documents are related to donald trump
+2025-05-22 05:38:26,778 - RAG_Agent - INFO - LLM query successful
+2025-05-22 05:38:26,778 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 05:38:52,318 - RAG_Agent - INFO - Received query: about healthcare
+2025-05-22 05:38:56,287 - RAG_Agent - INFO - LLM query successful
+2025-05-22 05:38:56,287 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 05:39:04,419 - RAG_Agent - INFO - WebSocket connection closed by client
+2025-05-22 05:41:38,316 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:41:38,316 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:41:38,316 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:41:38,330 - RAG_Agent - INFO - Loaded config.yaml from K:\Environments\RAG_Agent\config\config.yaml
+2025-05-22 05:41:38,332 - RAG_Agent - INFO - Loaded params.yaml from K:\Environments\RAG_Agent\params.yaml
+2025-05-22 05:41:38,338 - RAG_Agent - INFO - Loaded schema.yaml from K:\Environments\RAG_Agent\schema.yaml
+2025-05-22 05:41:39,078 - RAG_Agent - INFO - Expected documents from API: 9244
+2025-05-22 05:41:39,078 - RAG_Agent - WARNING - Incomplete data coverage detected
+2025-05-22 05:41:39,078 - RAG_Agent - WARNING - Current coverage: 1.47%
+2025-05-22 05:41:39,078 - RAG_Agent - WARNING - Missing 9108 documents
+2025-05-22 05:41:39,078 - RAG_Agent - WARNING - Date range: 2025-01-01 to 2025-05-22
+2025-05-22 05:41:39,078 - RAG_Agent - INFO - Fetching data from Federal Register API...
+2025-05-22 05:41:39,812 - RAG_Agent - INFO - Successfully fetched 100 documents
+2025-05-22 05:41:39,812 - RAG_Agent - INFO - Processing fetched data...
+2025-05-22 05:41:39,812 - RAG_Agent - INFO - Processed 69 records successfully
+2025-05-22 05:41:39,812 - RAG_Agent - INFO - Storing data in MySQL...
+2025-05-22 05:41:39,883 - RAG_Agent - INFO - Data pipeline completed successfully!
+2025-05-22 05:41:39,891 - RAG_Agent - INFO - Data range: 2025-01-02 to 2025-05-21
+2025-05-22 05:41:39,891 - RAG_Agent - INFO - Total records: 136
+2025-05-22 05:41:43,830 - RAG_Agent - INFO - WebSocket connection established
+2025-05-22 05:41:50,694 - RAG_Agent - INFO - Received query: about healthcare
+2025-05-22 05:41:54,607 - RAG_Agent - INFO - LLM query successful
+2025-05-22 05:41:54,607 - RAG_Agent - INFO - Response sent successfully
+2025-05-22 05:41:58,936 - RAG_Agent - INFO - WebSocket connection closed by client
